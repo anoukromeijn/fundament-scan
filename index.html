@@ -216,7 +216,13 @@
       border-color: rgba(22,200,242,.65);
       background: rgba(22,200,242,.16);
     }
-    .smallMuted{ color: var(--muted); font-size: 13px; margin: 0; }
+    .smallMuted{ 
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+}
 
     .summary{
       margin-top:16px;
@@ -296,7 +302,7 @@
 
   const startCopy = {
     title: "Hoe sterk is het fundament van jouw praktijk?",
-    text: "Doe nu de fundament-scan en ontdek waar jouw grootste verantwoordelijkheden liggen."
+    text: "Doe nu de fundament-scan en ontdek waar jouw grootste verbeterkansen liggen."
   };
 
   const questions = [
@@ -533,7 +539,7 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
         <strong>Jouw scores</strong><br/>
         ${questions.map(q => `• ${q.title.replace(/^\d+\.\s*/,'')}: <strong>${answers[q.key]}</strong>`).join("<br/>")}
         <br/><br/>
-        Laagste score: <strong>${minVal}</strong> → uitkomst gebaseerd op <strong>${o.label}</strong>.<br/>
+        Laagste score: <strong>${minVal}</strong>.<br/>
         Totale score: <strong>${totalScore}</strong>.
         <br/><br/>
         <strong>Gegevens</strong><br/>

@@ -554,7 +554,8 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
         Totale score: <strong>${totalScore}</strong>.
         <br/><br/>
         <strong>Gegevens</strong><br/>
-        • Naam: <strong>${escapeHtml(lead.name)}</strong><br/>
+        • Voornaam: <strong>${escapeHtml(lead.firstname)}</strong><br/>
+        • Achternaam: <strong>${escapeHtml(lead.lastname)}</strong><br/>
         • E-mail: <strong>${escapeHtml(lead.email)}</strong><br/>
         • Telefoon: <strong>${escapeHtml(lead.phone)}</strong>
       </div>
@@ -567,7 +568,7 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
     document.getElementById("restart").addEventListener("click", () => {
       step = -1;
       for (const k of Object.keys(answers)) delete answers[k];
-      lead.name = ""; lead.email = ""; lead.phone = "";
+      lead.firstname = ""; lead.lastname = ""; lead.email = ""; lead.phone = "";
       renderStart();
     });
   }
@@ -602,7 +603,8 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
 
   const payload = {
     timestamp: new Date().toISOString(),
-    name: lead.name,
+    firstname: lead.firstname
+    lastname: lead.lastname,
     email: lead.email,
     phone: lead.phone,
     q1_processen: answers.processen,

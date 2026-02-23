@@ -339,7 +339,7 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
   // step: -1 start, 0..2 vragen, 3 lead, 4 resultaat
   let step = -1;
   const answers = {}; // key -> 1..5
-  const lead = { name: "", email: "", phone: "" };
+  const lead = { firstName: "", lastName: "", email: "", phone: "" };
 
   const view = document.getElementById("view");
   const bar = document.getElementById("bar");
@@ -447,76 +447,80 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
   }
 
   function renderLeadForm() {
-    setProgress();
+  setProgress();
 
-    view.innerHTML = `
-      <h2 class="qtitle">Bijna klaar</h2>
-      <p class="qdesc">Vul je gegevens in om je resultaat te bekijken.</p>
+  view.innerHTML = `
+    <h2 class="qtitle">Bijna klaar</h2>
+    <p class="qdesc">Vul je gegevens in om je resultaat te bekijken.</p>
 
-     <div class="formGrid" role="form" aria-label="Contactgegevens">
-
-  <div class="field">
-    <label for="firstName">Voornaam</label>
-    <input id="firstName" type="text" placeholder="Bijv. Anouk" required />
-  </div>
-
-  <div class="field">
-    <label for="lastName">Achternaam</label>
-    <input id="lastName" type="text" placeholder="Bijv. Jansen" required />
-  </div>
-
-  <div class="field" style="grid-column: 1 / -1;">
-    <label for="email">E-mail</label>
-    <input id="email" type="email" placeholder="naam@bedrijf.nl" required />
-  </div>
-
-  <div class="field" style="grid-column: 1 / -1;">
-    <label for="phone">Telefoonnummer</label>
-    <input id="phone" type="tel" placeholder="06 12345678" required />
-  </div>
-
-</div>
-
-      <div class="error" id="err" style="display:none;"></div>
-
-      <div class="actions">
-        <button class="btn" id="back">Vorige</button>
-        <button class="btn primary" id="show">Bekijk resultaat</button>
+    <div class="formGrid" role="form" aria-label="Contactgegevens">
+      <div class="field">
+        <label for="firstName">Voornaam</label>
+        <input id="firstName" type="text" placeholder="Bijv. Anouk" value="${escapeHtml(lead.firstName)}" required />
       </div>
-    `;
 
-    const backBtn = document.getElementById("back");
-    const showBtn = document.getElementById("show");
-    const err = document.getElementById("err");
+      <div class="field">
+        <label for="lastName">Achternaam</label>
+        <input id="lastName" type="text" placeholder="Bijv. Jansen" value="${escapeHtml(lead.lastName)}" required />
+      </div>
 
-    backBtn.addEventListener("click", () => {
-      step = questions.length - 1;
-      renderQuestion();
-    });
+      <div class="field" style="grid-column: 1 / -1;">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" placeholder="naam@bedrijf.nl" value="${escapeHtml(lead.email)}" required />
+      </div>
 
-    showBtn.addEventListener("click", () => {
-      lead.name = document.getElementById("name").value.trim();
-      lead.email = document.getElementById("email").value.trim();
-      lead.phone = document.getElementById("phone").value.trim();
+      <div class="field" style="grid-column: 1 / -1;">
+        <label for="phone">Telefoonnummer</label>
+        <input id="phone" type="tel" placeholder="06 12345678" value="${escapeHtml(lead.phone)}" required />
+      </div>
+    </div>
 
-      const valid = validateLead(lead);
-      if (!valid.ok) {
-        err.style.display = "block";
-        err.textContent = valid.msg;
-        return;
+    <div class="error" id="err" style="display:none;"></div>
+
+    <div class="actions">
+      <button class="btn" id="back">Vorige</button>
+      <button class="btn primary" id="show">Bekijk resultaat</button>
+    </div>
+  `;
+
+  const backBtn = document.getElementById("back");
+  const showBtn = document.getElementById("show");
+  const err = document.getElementById("err");
+
+  backBtn.addEventListener("click", () => {
+    step = questions.length - 1;
+    renderQuestion();
+  });
+
+  showBtn.addEventListener("click", async () => {
+    // haal waarden op
+    lead.firstName = document.getElementById("firstName").value.trim();
+    lead.lastName  = document.getElementById("lastName").value.trim();
+    lead.email     = document.getElementById("email").value.trim();
+    lead.phone     = document.getElementById("phone").value.trim();
+
+    // valideer
+    const valid = validateLead(lead);
+    if (!valid.ok) {
+      err.style.display = "block";
+      err.textContent = valid.msg;
+      return;
+    }
+
+    // stuur naar Make/Sheets (als je dit al had toegevoegd)
+    try {
+      if (typeof sendToSheet === "function") {
+        await sendToSheet(lead, answers);
       }
+    } catch (e) {
+      // laat resultaat alsnog zien, ook als webhook faalt
+      console.warn("sendToSheet failed:", e);
+    }
 
-      // optioneel: lokaal bewaren (handig tijdens testen)
-      try {
-        localStorage.setItem("fundamentScanLead", JSON.stringify({ lead, answers, ts: Date.now() }));
-      } catch(e) {}
-
-      step = questions.length + 1;
-      sendToSheet(lead, answers);renderResult();
-    });
-  }
-
-  function renderResult() {
+    step = questions.length + 1;
+    renderResult();
+  });
+}
     setProgress();
     bar.style.width = "100%";
 
@@ -568,13 +572,14 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
     });
   }
 
-  function validateLead({ name, email, phone }) {
-    if (!name || name.length < 2) return { ok:false, msg:"Vul je naam in (minimaal 2 tekens)." };
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok:false, msg:"Vul een geldig e-mailadres in." };
-    const cleaned = phone.replace(/\s|-/g,"");
-    if (!cleaned || cleaned.length < 8) return { ok:false, msg:"Vul een geldig telefoonnummer in (minimaal 8 tekens)." };
-    return { ok:true };
-  }
+  function validateLead({ firstName, lastName, email, phone }) {
+  if (!firstName || firstName.length < 2) return { ok:false, msg:"Vul je voornaam in (minimaal 2 tekens)." };
+  if (!lastName || lastName.length < 2) return { ok:false, msg:"Vul je achternaam in (minimaal 2 tekens)." };
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok:false, msg:"Vul een geldig e-mailadres in." };
+  const cleaned = phone.replace(/\s|-/g,"");
+  if (!cleaned || cleaned.length < 8) return { ok:false, msg:"Vul een geldig telefoonnummer in." };
+  return { ok:true };
+}
 
   function escapeHtml(str){
     return String(str || "")

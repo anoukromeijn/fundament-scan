@@ -453,23 +453,29 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
       <h2 class="qtitle">Bijna klaar</h2>
       <p class="qdesc">Vul je gegevens in om je resultaat te bekijken.</p>
 
-      <div class="formGrid" role="form" aria-label="Contactgegevens">
-        <div class="field" style="grid-column: 1 / -1;">
-         <div class="field">
-  <label for="firstName">Voornaam</label>
-  <input id="firstName" type="text" placeholder="Bijv. Mariette" required />
+     <div class="formGrid" role="form" aria-label="Contactgegevens">
+
+  <div class="field">
+    <label for="firstName">Voornaam</label>
+    <input id="firstName" type="text" placeholder="Bijv. Anouk" required />
+  </div>
+
+  <div class="field">
+    <label for="lastName">Achternaam</label>
+    <input id="lastName" type="text" placeholder="Bijv. Jansen" required />
+  </div>
+
+  <div class="field" style="grid-column: 1 / -1;">
+    <label for="email">E-mail</label>
+    <input id="email" type="email" placeholder="naam@bedrijf.nl" required />
+  </div>
+
+  <div class="field" style="grid-column: 1 / -1;">
+    <label for="phone">Telefoonnummer</label>
+    <input id="phone" type="tel" placeholder="06 12345678" required />
+  </div>
+
 </div>
-
-<div class="field">
-  <label for="lastName">Achternaam</label>
-  <input id="lastName" type="text" placeholder="Bijv. Ham" required />
-        </div>
-
-        <div class="field">
-          <label for="phone">Telefoonnummer</label>
-          <input id="phone" type="tel" placeholder="06 12345678" value="${escapeHtml(lead.phone)}" required />
-        </div>
-      </div>
 
       <div class="error" id="err" style="display:none;"></div>
 

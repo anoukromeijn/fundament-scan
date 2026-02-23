@@ -609,7 +609,12 @@ Systemen moeten vóór je werken: het dagelijkse werk makkelijker maken en autom
       body: JSON.stringify(payload)
     });
   }
-
+window.addEventListener("load", () => {
+  window.parent.postMessage(
+    { height: document.body.scrollHeight },
+    "*"
+  );
+});
   // init
   renderStart();
 </script>

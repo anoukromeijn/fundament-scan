@@ -505,7 +505,7 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
       } catch(e) {}
 
       step = questions.length + 1;
-      renderResult();
+      sendToSheet(lead, answers);renderResult();
     });
   }
 
@@ -580,6 +580,33 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
 
   // init
   renderStart();
+  async function sendToSheet(lead, answers) {
+  const webhookURL = "https://hook.eu2.make.com/1o0ajts2f124zedwuyleoezik93j74ts";
+
+  const scored = Object.entries(answers);
+  const totalScore = scored.reduce((acc, [,v]) => acc + v, 0);
+  const minVal = Math.min(...scored.map(([,v]) => v));
+  const lowest = scored.find(([,v]) => v === minVal);
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    name: lead.name,
+    email: lead.email,
+    phone: lead.phone,
+    q1_processen: answers.processen,
+    q2_rollen: answers.rollen,
+    q3_systemen: answers.systemen,
+    lowest_area: lowest[0],
+    lowest_score: minVal,
+    total_score: totalScore
+  };
+
+  await fetch(webhookURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
 </script>
 </body>
 </html>

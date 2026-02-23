@@ -455,13 +455,14 @@ Dit is de laatste stap bij het creeren van een effiente praktijk structuur. Geen
 
       <div class="formGrid" role="form" aria-label="Contactgegevens">
         <div class="field" style="grid-column: 1 / -1;">
-          <label for="name">Naam</label>
-          <input id="name" type="text" placeholder="Bijv. Anouk" value="${escapeHtml(lead.name)}" required />
-        </div>
+         <div class="field">
+  <label for="firstName">Voornaam</label>
+  <input id="firstName" type="text" placeholder="Bijv. Mariette" required />
+</div>
 
-        <div class="field">
-          <label for="email">E-mail</label>
-          <input id="email" type="email" placeholder="naam@bedrijf.nl" value="${escapeHtml(lead.email)}" required />
+<div class="field">
+  <label for="lastName">Achternaam</label>
+  <input id="lastName" type="text" placeholder="Bijv. Ham" required />
         </div>
 
         <div class="field">
